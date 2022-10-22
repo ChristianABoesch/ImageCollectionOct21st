@@ -1,0 +1,263 @@
+<!doctype html>
+<html>
+<head>
+  <style>
+    body{
+      margin:0;
+    }
+    #container{
+      width: 100vw;
+      height: 100vh;
+    }
+    .slide{
+      width: 100%;
+      height: 100%;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      display: block;
+      position:absolute;
+      transition: 2s;
+    }
+    #prev{
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+    }
+    #next{
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+    }
+    #numContainer{
+      position:fixed;
+      width: 60%;
+      left: 20%;
+      text-align:center;
+      bottom:10px;
+    }
+    .active{
+      background:gold;
+    }
+    .playButton {
+      background-color: #dadada;
+      color: #000000;
+      padding: 10px;
+      border-radius: 10px;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      margin:10px
+    }
+    .stopButton {
+      background-color: #545454;
+      color: #ffffff;
+      padding: 10px;
+      border-radius: 10px;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      margin:10px
+    }
+    .medium-btn {
+      width: 70px;
+      height: 30px;
+    }
+    .accordion {
+    	background-color: #ffffff;
+    	color: #3f3f3f;
+    	cursor: pointer;
+    	padding: 18px;
+    	width: 100%;
+    	border: none;
+    	text-align: left;
+    	outline: none;
+    	font-size: 15px;
+    	transition: 0.4s;
+	  }
+
+	  .active, .accordion:hover {
+	    background-color: #dfdfdf;
+	  }
+
+	  .panel {
+ 	    padding: 0 18px;
+	    background-color: white;
+	    max-height: 0;
+	    overflow: hidden;
+	    transition: max-height 0.2s ease-out;
+	  }
+  </style>
+  <script>
+    var allImages = [];
+    var allPrompts = [];
+    var currentSlide = 0; 
+
+    function start(){
+      
+      allImages = ['images/a-sleeping-kitten-photorealistic-digital-art-865879617.png',
+          'images/a-sleeping-puppy-photorealistic-digital-art-577078812.png',
+          'images/a-sleeping-bunny-photorealistic-digital-art-509301523.png',
+          'images/a-sleeping-duckling-photorealistic-digital-art-82599052.png',
+          'images/a-sleeping-baby-sheep-photorealistic-digital-art-408951365.png',
+          'images/a-sleeping-fawn-photorealistic-digital-art-440431495.png']
+      
+      allPrompts = ['A sleeping kitten',
+          'A sleeping puppy',
+          'A sleeping bunny',
+          'A sleeping duckling',
+          'A sleeping sheeplet',
+          'A sleeping fawn']
+      
+      var markup = "";
+      for(var i = 0; i < allImages.length; i++){
+        markup += "<div class='slide' style='background-image:url(" + allImages[i] + ")'></div>"
+      }
+      document.getElementById("container").innerHTML = markup;
+
+      markup = "";
+      for(var i = 0; i < allImages.length; i++){
+        markup += "<button onclick='numClicked(" + i + ")' class='num'>" + (i + 1) + "</button>"
+      }
+      document.getElementById("numContainer").innerHTML = markup;
+
+      goToCurrentSlide();
+    }
+
+    var goPrev = function(){
+      currentSlide = currentSlide - 1
+      if(currentSlide < 0){
+        currentSlide = allImages.length;
+      }
+      goToCurrentSlide();
+    }
+
+    var goNext = function(){
+      currentSlide = currentSlide + 1;
+      if(currentSlide >= allImages.length){
+        currentSlide = 0;
+      }
+      goToCurrentSlide();
+    }
+
+    var numClicked = function(n){
+      currentSlide = n;
+      goToCurrentSlide(); 
+    }
+
+    var goToCurrentSlide = function(){
+      var allImgObjs = document.getElementsByClassName("slide")
+      var allNumObjs = document.getElementsByClassName("num")
+      var allPromptObjs = document.getElementsByClassName("prompt")
+      
+      // Update the prompt
+      var markup = "<h1>" + allPrompts[currentSlide] + "</h1>"
+      document.getElementById("promptContainer").innerHTML = markup;
+
+      for(var i = 0; i < allImgObjs.length; i++){
+        if(i==currentSlide){
+          allImgObjs[i].style.opacity = "1";
+          allNumObjs[i].className = "num active"; 
+        }
+        else{
+          allImgObjs[i].style.opacity = "0";
+          allNumObjs[i].className = "num"; 
+        }
+      }
+    }
+
+    function play() {
+        audio = new Audio('music/Last Call.mp3');
+        audio.play();
+        intervalId = window.setInterval(function(){
+          goNext();
+        }, 4000);
+      }
+
+    function stop(){
+        clearInterval(intervalId);
+        audio.pause();
+    }
+
+  </script>
+</head>
+
+<body onload='start()'>
+  <p>Song: "Last Call" by 1beatproductions</p>
+  <button onclick="play()" class="playButton">Play music</button>
+  <button onclick="stop()" class="stopButton">Stop music</button>
+  <h3>Shh ... they're sleeping ...</h3>
+
+  <div id='promptContainer'>
+    <h1 class='prompt'></h1>
+  </div>
+  <div id='container'>
+  </div>
+  <div id='numContainer'>
+  </div>
+  
+  <button onclick='goPrev()' id='prev'> Prev </button>
+  <button onclick='goNext()' id='next'> Next </button>
+
+  <button class="accordion"><strong>Names for the kitten (as suggested by our non-existent visitors)</strong></button>
+  <div class="panel">
+	  <li>Furrie</li>
+    <li>Lil Paws</li>
+    <li>Gertrude</li>
+  </div>
+
+  <button class="accordion"><strong>Names for the puppy (as suggested by our non-existent visitors)</strong></button>
+  <div class="panel">
+	  <li>Waggy</li>
+    <li>Bob Barker</li>
+    <li>Apple & Cinnamon</li>
+  </div>
+
+  <button class="accordion"><strong>Names for the bunny (as suggested by our non-existent visitors)</strong></button>
+  <div class="panel">
+	  <li>Wabbit</li>
+    <li>Le Hop</li>
+    <li>Antifreeze</li>
+    <li>Monstrocity</li>
+  </div>
+
+  <button class="accordion"><strong>Names for the duckling (as suggested by our non-existent visitors)</strong></button>
+  <div class="panel">
+	  <li>Quack</li>
+    <li>Qwack</li>
+    <li>Crackerjack</li>
+    <li>Tennessee</li>
+  </div>
+
+  <button class="accordion"><strong>Names for the sheep (as suggested by our non-existent visitors)</strong></button>
+  <div class="panel">
+	  <ul>Nobody wanted to name the sheep</ul>
+  </div>
+
+  <button class="accordion"><strong>Names for the fawn (as suggested by our non-existent visitors)</strong></button>
+  <div class="panel">
+	  <li>Anything but Bambi</li>
+    <li>Bambi</li>
+    <li>Oakwood Lookin' Thing</li>
+    <li>Fawnera Bread</li>
+    <li>ERROR</li>
+    <li>Not a suggestion but I really think AI could have made these animals a little easier on the eyes</li>
+  </div>
+
+  <script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+    
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.maxHeight) {
+          panel.style.maxHeight = null;
+        } else {
+          panel.style.maxHeight = panel.scrollHeight + "px";
+        } 
+      });
+    }
+  </script>
+
+</body>
+
+</html>
